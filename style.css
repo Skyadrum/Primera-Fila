@@ -1,395 +1,200 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+/* --- Variables & Core --- */
+:root {
+    --gold: #d4af37;
+    --gold-dim: #997d29;
+    --black: #0a0a0a;
+    --card-bg: #161616;
+    --text-white: #ffffff;
+    --text-grey: #b0b0b0;
+    --transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-body {
-    background-color: #0d0d0d;
-    color: #e6e6e6;
-    font-family: 'Montserrat', sans-serif;
-}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { background: var(--black); color: var(--text-white); font-family: 'Inter', sans-serif; line-height: 1.7; overflow-x: hidden; }
 
-/* --- Golden Text Logic --- */
-h1, h2, h3, .logo, .nav-links a {
-    font-family: 'Playfair Display', serif;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    background: linear-gradient(to right, #BF953F, #FCF6BA, #B38728, #FBF5B7, #AA771C);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    color: transparent;
-}
-
-h1 { font-size: 4rem; letter-spacing: 5px; margin-bottom: 10px; }
-h2 { font-size: 2.5rem; margin-bottom: 20px; text-align: center; }
-
-
-
-.btn-gold {
-    background: linear-gradient(45deg, #BF953F, #FCF6BA, #B38728, #FBF5B7, #AA771C);
-    background-size: 200% auto;
-    color: #000 !important;
-    font-weight: 700;
-    padding: 15px 35px;
-    border-radius: 50px;
-    border: none;
-    text-decoration: none;
-    transition: 0.5s;
-    display: inline-block;
-    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
-}
-
-.btn-gold:hover {
-    background-position: right center; /* Shine effect */
-    transform: translateY(-3px);
-    box-shadow: 0 6px 20px rgba(212, 175, 55, 0.5);
-}
-
-/* --- Navigation & Sticky Effect --- */
+/* --- Navigation --- */
 header {
-    background: transparent;
-    padding: 25px 10%;
-    position: fixed; 
-    width: 100%;
-    top: 0;
-    left: 0;
-    z-index: 9999 !important;
-    transition: all 0.4s ease;
-
-    /* --- ADDED: Constant Golden Line --- */
-    border-bottom: 2px solid #D4AF37; 
-    /* Optional: Subtle glow to the line at the start */
-    box-shadow: 0 4px 10px rgba(212, 175, 55, 0.2);
+    background: rgba(10, 10, 10, 0.8);
+    backdrop-filter: blur(15px);
+    border-bottom: 1px solid rgba(212, 175, 55, 0.1);
+    position: fixed; width: 100%; top: 0; z-index: 1000; padding: 1.2rem 0;
 }
 
+/* Header style when scrolled */
 header.scrolled {
-    background-color: #1A1A1A; 
-    padding: 15px 10%;
-    backdrop-filter: blur(10px);
-    
-    /* Keep the border here too or it will vanish when scrolled */
-    border-bottom: 2px solid #D4AF37; 
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.9); 
+    background: rgba(10, 10, 10, 0.95);
+    border-bottom: 1px solid var(--gold);
+    padding: 10px 0; /* Shrinks header slightly on scroll */
 }
 
-nav {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
+nav { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 0 2rem; }
+.logo { font-family: 'Montserrat', sans-serif; font-weight: 900; letter-spacing: 6px; color: var(--gold); }
+.nav-links { list-style: none; display: flex; gap: 2rem; }
+.nav-links a { text-decoration: none; color: var(--text-white); text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px; transition: var(--transition); }
+.nav-links a:hover { color: var(--gold); }
 
-.nav-links { list-style: none; display: flex; }
-.nav-links li { margin-left: 20px; }
-
-
-
-.logo {
-    font-size: 1.5rem;
-    font-weight: bold;
-    letter-spacing: 2px;
-}
-
-.nav-links {
-    list-style: none;
-    display: flex;
-}
-
-.nav-links li {
-    margin-left: 20px;
-}
-
-.nav-links a {
-    color: #fff;
-    text-decoration: none;
-    font-weight: bold;
-    transition: 0.3s;
-}
-
-.nav-links a:hover {
-    filter: brightness(1.3);
-    transform: translateY(-2px);
-}
-
-.btn-gold {
-    background: linear-gradient(45deg, #BF953F, #FCF6BA, #B38728, #FBF5B7, #AA771C);
-    background-size: 200% auto;
-    color: #000 !important;
-    -webkit-text-fill-color: #000 !important; /* Overrides global golden text */
-    font-weight: 700;
-    padding: 15px 35px;
-    border-radius: 50px;
-    border: none;
-    text-decoration: none;
-    transition: 0.5s;
-    display: inline-block;
-    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
-}
-
-.btn-gold:hover {
-    background-position: right center;
-    transform: translateY(-3px);
-    box-shadow: 0 6px 20px rgba(212, 175, 55, 0.5);
-}
-
-/* --- Jumbotron --- */
+/* --- Hero Section (Parallax) --- */
 .jumbotron {
-    position: relative;
-    height: 80vh;
-    min-height: 450px;
+    height: 100vh;
+    /* We use a 'vignette' effect: dark at the very top/bottom, clear in the middle */
+    background: linear-gradient(
+        to bottom, 
+        rgba(0, 0, 0, 0.7) 0%, 
+        rgba(0, 0, 0, 0.2) 40%, 
+        rgba(0, 0, 0, 0.2) 60%, 
+        rgba(0, 0, 0, 0.8) 100%
+    ), 
+    url('img/primera-fila.png') no-repeat center center;
     
-    /* ADDED: A subtle dark gradient at the top (rgba 0,0,0,0.6) 
-       that fades to the standard 0.7 overlay */
-    background: 
-        linear-gradient(to bottom, 
-            rgba(0, 0, 0, 0.9) 0%, 
-            rgba(0, 0, 0, 0.4) 20%, 
-            rgba(0, 0, 0, 0.7) 100%), 
-        url('img/primera-fila.png') no-repeat center center/cover;
-        
+    background-size: cover;
+    background-attachment: fixed; /* Keep the parallax effect */
     display: flex;
     align-items: center;
     justify-content: center;
-    color: white;
     text-align: center;
+    
+    /* Ensure it's never hidden by the scroll script */
+    opacity: 1 !important;
+    transform: none !important;
 }
 
-.jumbotron p { font-size: 1.4rem; margin-bottom: 30px; font-weight: 300; }
-
 .jumbotron h1 {
-    font-size: 4rem;
+    font-family: 'Montserrat', sans-serif;
+    font-size: clamp(3.5rem, 12vw, 7rem); /* Bigger and bolder */
     text-transform: uppercase;
-    letter-spacing: 5px;
-    margin-bottom: 10px;
+    color: #fff;
+    text-shadow: 0 4px 15px rgba(0, 0, 0, 0.8); /* Shadow makes white text pop on any photo */
+    margin-bottom: 0.5rem;
 }
 
 .jumbotron p {
-    font-size: 1.4rem;
-    margin-bottom: 30px;
-    font-weight: 300;
-}
-
-/* Jumbotron Buttons */
-.cta-buttons a {
-    text-decoration: none;
-    padding: 15px 30px;
-    border-radius: 50px;
-    font-weight: bold;
-    transition: 0.3s;
-    display: inline-block;
-    margin: 10px;
-}
-
-.btn-primary {
-    background-color: #e63946;
-    color: white;
-}
-
-.btn-secondary {
-    border: 2px solid white;
-    color: white;
-}
-
-.btn-primary:hover { background-color: #f54d5a; }
-.btn-secondary:hover { background: white; color: black; }
-
-/* General Sections */
-.container {
-    padding: 80px 10%;
-    text-align: center;
-}
-
-h2 {
-    font-size: 2.5rem;
-    margin-bottom: 20px;
-    text-transform: uppercase;
-}
-
-/* Gallery Grid */
-.grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 20px;
-    margin-top: 30px;
-}
-
-.img-placeholder {
-    background: #333;
-    height: 250px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 8px;
-    border: 1px solid #444;
-}
-
-/* Events */
-.event-list {
-    list-style: none;
-    max-width: 700px;
-    margin: 30px auto;
-    text-align: left;
-}
-
-.event-list li {
-    padding: 20px;
-    border-bottom: 1px solid #333;
-    display: flex;
-    justify-content: space-between;
-}
-
-/* Form */
-form {
-    display: flex;
-    flex-direction: column;
-    max-width: 500px;
-    margin: 30px auto;
-}
-
-input, textarea {
-    margin-bottom: 15px;
-    padding: 15px;
-    border-radius: 4px;
-    border: 1px solid #333;
-    background: #222;
-    color: white;
-}
-
-button {
-    padding: 15px;
-    background: #e63946;
-    color: white;
-    border: none;
-    cursor: pointer;
-    font-weight: bold;
-    text-transform: uppercase;
-}
-
-footer {
-    background: #000;
-    padding: 40px;
-    text-align: center;
-    font-size: 0.9rem;
-    color: #777;
-}
-
-/* Responsive Mobile Adjustments */
-@media (max-width: 768px) {
-    .nav-links { display: none; }
-    .jumbotron h1 { font-size: 2.5rem; }
-    .jumbotron p { font-size: 1.1rem; }
-    .container { padding: 50px 5%; }
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 1.8rem;
+    color: var(--gold);
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
 }
 
 
-/* Font Awsome Socila Media */
-.social-icons {
-    display: flex;
-    justify-content: center; /* Centers icons horizontally */
-    align-items: center;     /* Centers icons vertically (IMPORTANT) */
-    gap: 25px;               /* Adds even space between them */
-    margin: 20px 0;
+/* Base state for other sections */
+.reveal-init {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 1s ease-out, transform 1s ease-out;
 }
 
-.insta-img {
-    width: 32px;             /* Matches fa-2xl visual height */
-    height: 32px;
-    display: block;          /* Prevents bottom "ghost" spacing */
+/* Visible state triggered by JS */
+.reveal-init.active {
+    opacity: 1;
+    transform: translateY(0);
 }
 
-/* Optional: Make them all slightly larger/smaller together */
-footer {
-    background-color: #000; /* Ensures the footer stays black */
-    padding: 40px 0;
-    text-align: center;
-    color: #fff;
+/* --- General Layout --- */
+.container { padding: 120px 2rem; max-width: 900px; margin: 0 auto; text-align: center; }
+h2 { font-family: 'Montserrat', sans-serif; font-size: 2.5rem; margin-bottom: 3rem; color: var(--gold); text-transform: uppercase; }
+
+/* --- Event List --- */
+.event-list { list-style: none; text-align: left; }
+.event-list li { 
+    background: var(--card-bg); padding: 1.5rem 2rem; margin-bottom: 1rem; border-radius: 12px;
+    display: flex; justify-content: space-between; align-items: center;
+    border: 1px solid rgba(255,255,255,0.05); transition: var(--transition);
 }
+.event-list li:hover { transform: translateX(10px); border-color: var(--gold); background: #1f1f1f; }
+.event-date { font-weight: 700; color: var(--gold); width: 80px; }
 
-.social-icons {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 30px; /* Space between icons */
-    margin-bottom: 20px;
+/* --- Contact Form --- */
+.contact-card { background: var(--card-bg); padding: 4rem; border-radius: 24px; box-shadow: 0 30px 60px rgba(0,0,0,0.5); }
+input, textarea { 
+    width: 100%; padding: 1.2rem; margin-bottom: 1.5rem; background: #0c0c0c; 
+    border: 1px solid #333; color: #fff; border-radius: 8px; font-family: inherit; 
 }
-
-.social-icons a {
-    transition: transform 0.3s ease, opacity 0.3s ease;
+input:focus { border-color: var(--gold); outline: none; }
+button { 
+    width: 100%; padding: 1.2rem; background: var(--gold); color: #000; font-weight: 800; 
+    border: none; border-radius: 50px; text-transform: uppercase; cursor: pointer; transition: var(--transition);
 }
+button:hover { background: var(--text-white); transform: translateY(-3px); box-shadow: 0 10px 20px rgba(212, 175, 55, 0.2); }
 
-.social-icons a:hover {
-    transform: scale(1.2); /* Makes icon grow slightly */
-    opacity: 0.8;
-}
-
-/* Specific hover glow for the TikTok icon on black */
-.fa-tiktok:hover {
-    filter: drop-shadow(0 0 8px #00F2EA) drop-shadow(0 0 8px #FD3E3E);
-}
-
-/* --- Gallery Sliders Base --- */
-.slider-section { padding: 40px 0; }
-
-.slider-section, .slider {
-    position: relative;
-    z-index: 1; /* Much lower than the header's 9999 */
-}
-
+/* --- Sliders --- */
 .slider {
     width: 100%;
     overflow: hidden;
-    padding: 60px 0;
+    padding: 20px 0;
+    position: relative;
 }
-
 .slider-track {
     display: flex;
-    gap: 25px;
-    width: max-content;
-    will-change: transform;
+    gap: 20px;
+    width: max-content; /* Critical for seamless JS calc */
 }
 
-/* --- Slide Styling --- */
 .slide {
-    width: 340px;
-    aspect-ratio: 16 / 9;
-    flex-shrink: 0;
-    border: 3px solid #D4AF37;
-    padding: 3px;
-    background-color: #000;
-    border-radius: 12px;
+    padding: 10px; /* Space for the "frame" to breathe */
+}
+
+.slide img {
+    width: 300px;
+    height: 400px;
+    object-fit: cover;
+    border-radius: 8px; /* Slightly rounded corners for a modern feel */
+    
+    /* The Gold Border (Frame) */
+    border: 2px solid rgba(212, 175, 55, 0.3); /* Subtle gold by default */
+    padding: 5px; /* Creates the 'thumbnail' margin between border and photo */
+    background-color: #111; /* Dark background behind the padding */
+    
+    filter: grayscale(40%) brightness(0.8);
+    transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.slide img:hover {
+    filter: grayscale(0%) brightness(1.1);
+    transform: scale(1.02);
+    
+    /* Border turns into a glowing gold frame */
+    border-color: var(--gold); 
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
+    cursor: pointer;
+}
+
+@keyframes scroll {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-100%); }
+}
+
+
+.slider-section {
+    padding: 60px 0;
+    background: #050505; /* Deep black to make photos pop */
     overflow: hidden;
-    transition: transform 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
-    box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
 }
 
-.slide img { width: 100%; height: 100%; object-fit: cover; border-radius: 4px; }
-
-/* Netflix Hover Effect */
-.slide:hover {
-    transform: scale(1.15);
-    z-index: 10;
-    border-color: #FCF6BA;
-    box-shadow: 0 0 30px rgba(212, 175, 55, 0.7);
+/* --- Center Gallery Headers --- */
+.slider-section h2 {
+    text-align: center;
+    width: 100%;
+    margin-bottom: 40px;
+    font-family: 'Montserrat', sans-serif;
+    color: var(--gold);
+    text-transform: uppercase;
+    letter-spacing: 3px;
+}
+/* --- Reveal Animation --- */
+.reveal { 
+    opacity: 0; 
+    transform: translateY(30px); 
+    transition: all 0.8s ease-out; /* Slightly faster for better feel */
 }
 
-/* --- Footer & Social --- */
-footer { background: #000; padding: 40px 0; text-align: center; }
-
-.social-icons {
-    display: flex;
-    justify-content: center;
-    gap: 30px;
-    margin-bottom: 20px;
+.reveal.active { 
+    opacity: 1; 
+    transform: translateY(0); 
 }
 
-.social-icons a { transition: 0.3s; }
-.social-icons a:hover { transform: scale(1.2); }
-
-.fa-tiktok:hover { filter: drop-shadow(0 0 8px #00F2EA) drop-shadow(0 0 8px #FD3E3E); }
-
-/* --- Forms & Container --- */
-.container { padding: 80px 10%; text-align: center; }
-form { display: flex; flex-direction: column; max-width: 500px; margin: 30px auto; }
-input, textarea { margin-bottom: 15px; padding: 15px; background: #222; color: white; border: 1px solid #333; }
-
+/* --- Footer --- */
+footer { padding: 4rem 2rem; border-top: 1px solid rgba(255,255,255,0.05); text-align: center; }
+.social-icons { display: flex; justify-content: center; gap: 2rem; margin-bottom: 2rem; }
+.social-icons a { color: var(--text-grey); font-size: 1.5rem; transition: var(--transition); }
+.social-icons a:hover { color: var(--gold); transform: scale(1.2); }
