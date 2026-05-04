@@ -1,41 +1,54 @@
-// Use window.onload instead of DOMContentLoaded to ensure images are fully loaded
-window.onload = () => {
-    document.querySelectorAll('.slider-track').forEach(track => {
-        const isRight = track.classList.contains('track-right');
-        
-        // Use the actual measured width of half the track
-        const scrollResetPoint = track.scrollWidth / 2;
-        
-        const speed = 1; 
-        let scrollPos = isRight ? -scrollResetPoint : 0;
+document.addEventListener('DOMContentLoaded', () => {
+    
+    // --- 1. SEAMLESS SLIDER LOGIC ---
+    // We use DOMContentLoaded but wait for images to ensure widths are correct
+    window.addEventListener('load', () => {
+        document.querySelectorAll('.slider-track').forEach(track => {
+            const isRight = track.classList.contains('track-right');
+            const scrollResetPoint = track.scrollWidth / 2;
+            const speed = 1; 
+            let scrollPos = isRight ? -scrollResetPoint : 0;
 
-        function animate() {
-            scrollPos += isRight ? speed : -speed;
-            
-            // Seamless Reset Logic
-            if (isRight && scrollPos >= 0) {
-                // If it hits 0, it snaps back to the middle (identical frame)
-                scrollPos = -scrollResetPoint;
-            } 
-            else if (!isRight && Math.abs(scrollPos) >= scrollResetPoint) {
-                // If it hits the end of the first set, it snaps back to 0
-                scrollPos = 0;
+            function animate() {
+                scrollPos += isRight ? speed : -speed;
+
+                if (isRight && scrollPos >= 0) {
+                    scrollPos = -scrollResetPoint;
+                } else if (!isRight && Math.abs(scrollPos) >= scrollResetPoint) {
+                    scrollPos = 0;
+                }
+
+                track.style.transform = `translateX(${scrollPos}px)`;
+                requestAnimationFrame(animate);
             }
-            
-            track.style.transform = `translateX(${scrollPos}px)`;
-            requestAnimationFrame(animate);
-        }
-        
-        animate();
+            animate();
+        });
     });
 
-    window.addEventListener('scroll', () => {
+    // --- 2. HEADER SCROLL EFFECT ---
     const header = document.querySelector('header');
-    // If you scroll more than 50px, add the visible background class
-    if (window.scrollY > 50) {
-        header.classList.add('scrolled');
-    } else {
-        header.classList.remove('scrolled');
-    }
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 50) {
+            header.classList.add('scrolled');
+        } else {
+            header.classList.remove('scrolled');
+        }
+    });
+
+    // --- 3. REVEAL ON SCROLL LOGIC ---
+    const revealSections = document.querySelectorAll('section:not(.jumbotron)');
+    
+    const revealObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('active');
+            }
+        });
+    }, { threshold: 0.15 });
+
+    revealSections.forEach(section => {
+        // Prepare sections for animation
+        section.classList.add('reveal-init');
+        revealObserver.observe(section);
+    });
 });
-};
