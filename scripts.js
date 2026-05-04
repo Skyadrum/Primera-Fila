@@ -52,3 +52,51 @@ document.addEventListener('DOMContentLoaded', () => {
         revealObserver.observe(section);
     });
 });
+
+// Cerrar el menú móvil al hacer clic en cualquier enlace
+document.querySelectorAll('.nav-links a').forEach(link => {
+    link.addEventListener('click', function(e) {
+        e.preventDefault();
+
+        // 1. Cerrar menú móvil
+        const checkbox = document.getElementById('check');
+        if (checkbox) checkbox.checked = false;
+
+        // 2. Obtener destino
+        const targetId = this.getAttribute('href');
+        const targetElement = document.querySelector(targetId);
+        
+        if (targetElement) {
+            const headerOffset = 80; // Espacio para el header
+            const targetPosition = targetElement.offsetTop - headerOffset;
+            const startPosition = window.pageYOffset;
+            const distance = targetPosition - startPosition;
+            
+            // CONFIGURACIÓN DE TIEMPO (en milisegundos)
+            const duration = 1500; // 1.5 segundos para un viaje suave
+            let start = null;
+
+            // 3. Función de animación paso a paso
+            function animation(currentTime) {
+                if (start === null) start = currentTime;
+                const timeElapsed = currentTime - start;
+                
+                // Función matemática "EaseInOutQuad" (suave al inicio y al final)
+                const run = ease(timeElapsed, startPosition, distance, duration);
+                
+                window.scrollTo(0, run);
+                
+                if (timeElapsed < duration) requestAnimationFrame(animation);
+            }
+
+            function ease(t, b, c, d) {
+                t /= d / 2;
+                if (t < 1) return c / 2 * t * t + b;
+                t--;
+                return -c / 2 * (t * (t - 2) - 1) + b;
+            }
+
+            requestAnimationFrame(animation);
+        }
+    });
+});
