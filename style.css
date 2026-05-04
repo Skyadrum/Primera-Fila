@@ -10,7 +10,7 @@
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
-html { scroll-behavior: smooth; }
+html { scroll-behavior: auto !important; }
 body { background: var(--black); color: var(--text-white); font-family: 'Inter', sans-serif; line-height: 1.7; overflow-x: hidden; }
 
 /* --- Navigation --- */
@@ -208,6 +208,8 @@ footer { padding: 4rem 2rem; border-top: 1px solid rgba(255,255,255,0.05); text-
     cursor: pointer;
     display: none; /* Oculto en escritorio */
     transition: var(--transition);
+    position: relative; 
+    z-index: 1001;
 }
 
 #check {
@@ -253,12 +255,17 @@ footer { padding: 4rem 2rem; border-top: 1px solid rgba(255,255,255,0.05); text-
 }
 
 /* Ajuste para el Jumbotron en móviles */
-@media (max-width: 600px) {
+@media (max-width: 858px) {
     .jumbotron h1 {
         font-size: 3rem;
     }
     .contact-card {
         padding: 2rem;
+    }
+
+    .nav-links {
+        /* Cambia el 0.5s por 0.8s para que el menú se retire con elegancia */
+        transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
     }
 }
 
