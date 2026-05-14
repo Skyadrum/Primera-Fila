@@ -387,4 +387,9 @@ footer {
     .contact-card {
         padding: 2rem;
     }
+
+    .nav-links {
+        /* Cambia el 0.5s por 0.8s para que el menú se retire con elegancia */
+        transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
 }
