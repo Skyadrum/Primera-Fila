@@ -9,35 +9,131 @@
     --transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
-html { scroll-behavior: auto !important; }
-body { background: var(--black); color: var(--text-white); font-family: 'Inter', sans-serif; line-height: 1.7; overflow-x: hidden; }
+* { 
+    margin: 0; 
+    padding: 0; 
+    box-sizing: border-box; 
+}
 
-/* --- Navigation --- */
+/* 1. Definición del efecto de desvanecimiento sutil */
+@keyframes sutilFadeIn {
+    from {
+        opacity: 0;
+        filter: brightness(0.7) blur(2px); /* Inicia un poco oscuro y con un micro desenfoque */
+    }
+    to {
+        opacity: 1;
+        filter: brightness(1) blur(0); /* Termina en su estado natural nítido */
+    }
+}
+
+
+/* Dejamos que el navegador asuma el control nativo suavizado directamente por hardware */
+html { 
+    scroll-behavior: auto !important; 
+}
+
+/* Agrega un margen interno superior de cortesía a las secciones para compensar el menú fijo */
+section.container, .slider-section {
+    scroll-margin-top: 80px; /* Ajusta este número según los píxeles de altura de tu header */
+}
+
+@keyframes fadeInEntrance {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+body { 
+    background: var(--black); 
+    color: var(--text-white); 
+    font-family: 'Inter', sans-serif; 
+    line-height: 1.7; 
+    overflow-x: hidden;
+}
+
+/* --- Encabezado Fijo Tradicional Inamovible --- */
 header {
-    background: rgba(10, 10, 10, 0.8);
+    background: rgba(10, 10, 10, 0.92); /* Un poco más opaco para evitar transparencias rotas */
     backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
     border-bottom: 1px solid rgba(212, 175, 55, 0.1);
-    position: fixed; width: 100%; top: 0; z-index: 1000; padding: 1.2rem 0;
+    position: fixed; 
+    width: 100%; 
+    top: 0; 
+    left: 0;
+    z-index: 999999 !important; /* Capa suprema estándar */
+    padding: 1.2rem 0;
+    transition: padding 0.3s ease, background 0.3s ease;
 }
 
-/* Header style when scrolled */
 header.scrolled {
-    background: rgba(10, 10, 10, 0.95);
+    background: rgba(10, 10, 10, 0.98);
     border-bottom: 1px solid var(--gold);
-    padding: 10px 0; /* Shrinks header slightly on scroll */
+    padding: 0.7rem 0;
 }
 
-nav { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 0 2rem; }
-.logo { font-family: 'Montserrat', sans-serif; font-weight: 900; letter-spacing: 6px; color: var(--gold); }
-.nav-links { list-style: none; display: flex; gap: 2rem; }
-.nav-links a { text-decoration: none; color: var(--text-white); text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px; transition: var(--transition); }
-.nav-links a:hover { color: var(--gold); }
+nav { 
+    max-width: 1200px; 
+    margin: 0 auto; 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    padding: 0 2rem; 
+}
 
-/* --- Hero Section (Parallax) --- */
+.logo { 
+    font-family: 'Montserrat', sans-serif; 
+    font-weight: 900; 
+    letter-spacing: 6px; 
+    color: var(--gold); 
+}
+
+.nav-links { 
+    list-style: none; 
+    display: flex; 
+    gap: 2rem; 
+}
+
+.nav-links a { 
+    text-decoration: none; 
+    color: var(--text-white); 
+    text-transform: uppercase; 
+    font-size: 0.8rem; 
+    letter-spacing: 1px; 
+    transition: var(--transition); 
+}
+
+.nav-links a:hover { 
+    color: var(--gold); 
+}
+
+/* --- Menú Hamburguesa --- */
+.checkbtn {
+    display: none; 
+    flex-direction: column;
+    justify-content: space-between;
+    width: 26px;
+    height: 18px;
+    cursor: pointer;
+    z-index: 1000000;
+    position: relative;
+}
+
+.checkbtn span {
+    width: 100%;
+    height: 2px;
+    background-color: var(--gold);
+    border-radius: 2px;
+    transition: var(--transition);
+}
+
+#check {
+    display: none;
+}
+
+/* --- Hero Section Parallax Seguro --- */
 .jumbotron {
     height: 100vh;
-    /* We use a 'vignette' effect: dark at the very top/bottom, clear in the middle */
     background: linear-gradient(
         to bottom, 
         rgba(0, 0, 0, 0.7) 0%, 
@@ -46,76 +142,117 @@ nav { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-b
         rgba(0, 0, 0, 0.8) 100%
     ), 
     url('img/primera-fila.png') no-repeat center center;
-    
     background-size: cover;
-    background-attachment: fixed; /* Keep the parallax effect */
+    background-attachment: fixed;
     display: flex;
     align-items: center;
     justify-content: center;
     text-align: center;
-    
-    /* Ensure it's never hidden by the scroll script */
-    opacity: 1 !important;
-    transform: none !important;
+    position: relative;
+    z-index: 1 !important; /* Capa neutra controlada */
+    animation: fadeInEntrance 1.5s cubic-bezier(0.85, 1, 0.5, 1) forwards;
 }
 
-.jumbotron h1 {
-    font-family: 'Montserrat', sans-serif;
-    font-size: clamp(3.5rem, 12vw, 7rem); /* Bigger and bolder */
-    text-transform: uppercase;
-    color: #fff;
-    text-shadow: 0 4px 15px rgba(0, 0, 0, 0.8); /* Shadow makes white text pop on any photo */
-    margin-bottom: 0.5rem;
-}
-
-.jumbotron p {
-    font-family: 'Playfair Display', serif;
-    font-style: italic;
-    font-size: 1.8rem;
-    color: var(--gold);
-    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
-}
-
-
-/* Base state for other sections */
-.reveal-init {
+/* --- Animaciones de Scroll Basadas exclusivamente en Opacidad --- */
+.reveal, .reveal-init {
     opacity: 0;
-    transform: translateY(30px);
-    transition: opacity 1s ease-out, transform 1s ease-out;
+    transition: opacity 1.2s ease-out;
+    position: relative;
+    z-index: 5;
 }
 
-/* Visible state triggered by JS */
-.reveal-init.active {
+.reveal.active, .reveal-init.active {
     opacity: 1;
-    transform: translateY(0);
 }
 
 /* --- General Layout --- */
-.container { padding: 120px 2rem; max-width: 900px; margin: 0 auto; text-align: center; }
-h2 { font-family: 'Montserrat', sans-serif; font-size: 2.5rem; margin-bottom: 3rem; color: var(--gold); text-transform: uppercase; }
+.container { 
+    padding: 120px 2rem; 
+    max-width: 900px; 
+    margin: 0 auto; 
+    text-align: center; 
+}
+
+h2 { 
+    font-family: 'Montserrat', sans-serif; 
+    font-size: 2.5rem; 
+    margin-bottom: 3rem; 
+    color: var(--gold); 
+    text-transform: uppercase; 
+}
 
 /* --- Event List --- */
-.event-list { list-style: none; text-align: left; }
-.event-list li { 
-    background: var(--card-bg); padding: 1.5rem 2rem; margin-bottom: 1rem; border-radius: 12px;
-    display: flex; justify-content: space-between; align-items: center;
-    border: 1px solid rgba(255,255,255,0.05); transition: var(--transition);
+.event-list { 
+    list-style: none; 
+    text-align: left; 
 }
-.event-list li:hover { transform: translateX(10px); border-color: var(--gold); background: #1f1f1f; }
-.event-date { font-weight: 700; color: var(--gold); width: 80px; }
+
+.event-list li { 
+    background: var(--card-bg); 
+    padding: 1.5rem 2rem; 
+    margin-bottom: 1rem; 
+    border-radius: 12px;
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center;
+    border: 1px solid rgba(255,255,255,0.05); 
+    transition: var(--transition);
+}
+
+.event-list li:hover { 
+    transform: translateX(10px); 
+    border-color: var(--gold); 
+    background: #1f1f1f; 
+}
+
+.event-date { 
+    font-weight: 700; 
+    color: var(--gold); 
+    width: 80px; 
+}
 
 /* --- Contact Form --- */
-.contact-card { background: var(--card-bg); padding: 4rem; border-radius: 24px; box-shadow: 0 30px 60px rgba(0,0,0,0.5); }
+.contact-card { 
+    background: var(--card-bg); 
+    padding: 4rem; 
+    border-radius: 24px; 
+    box-shadow: 0 30px 60px rgba(0,0,0,0.5); 
+}
+
 input, textarea { 
-    width: 100%; padding: 1.2rem; margin-bottom: 1.5rem; background: #0c0c0c; 
-    border: 1px solid #333; color: #fff; border-radius: 8px; font-family: inherit; 
+    width: 100%; 
+    padding: 1.2rem; 
+    margin-bottom: 1.5rem; 
+    background: #0c0c0c; 
+    border: 1px solid #333; 
+    color: #fff; 
+    border-radius: 8px; 
+    font-family: inherit; 
 }
-input:focus { border-color: var(--gold); outline: none; }
+
+input:focus { 
+    border-color: var(--gold); 
+    outline: none; 
+}
+
 button { 
-    width: 100%; padding: 1.2rem; background: var(--gold); color: #000; font-weight: 800; 
-    border: none; border-radius: 50px; text-transform: uppercase; cursor: pointer; transition: var(--transition);
+    width: 100%; 
+    padding: 1.2rem; 
+    background: var(--gold); 
+    color: #000; 
+    font-weight: 800; 
+    border: none; 
+    border-radius: 50px; 
+    text-transform: uppercase; 
+    cursor: pointer; 
+    transition: var(--transition);
 }
-button:hover { background: var(--text-white); transform: translateY(-3px); box-shadow: 0 10px 20px rgba(212, 175, 55, 0.2); }
+
+button:hover { 
+    background: var(--text-white); 
+    transform: translateY(-3px); 
+    box-shadow: 0 10px 20px rgba(212, 175, 55, 0.2); 
+}
 
 /* --- Sliders --- */
 .slider {
@@ -124,27 +261,25 @@ button:hover { background: var(--text-white); transform: translateY(-3px); box-s
     padding: 20px 0;
     position: relative;
 }
+
 .slider-track {
     display: flex;
     gap: 20px;
-    width: max-content; /* Critical for seamless JS calc */
+    width: max-content;
 }
 
 .slide {
-    padding: 10px; /* Space for the "frame" to breathe */
+    padding: 10px;
 }
 
 .slide img {
     width: 300px;
     height: 400px;
     object-fit: cover;
-    border-radius: 8px; /* Slightly rounded corners for a modern feel */
-    
-    /* The Gold Border (Frame) */
-    border: 2px solid rgba(212, 175, 55, 0.3); /* Subtle gold by default */
-    padding: 5px; /* Creates the 'thumbnail' margin between border and photo */
-    background-color: #111; /* Dark background behind the padding */
-    
+    border-radius: 8px;
+    border: 2px solid rgba(212, 175, 55, 0.3);
+    padding: 5px;
+    background-color: #111;
     filter: grayscale(40%) brightness(0.8);
     transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
@@ -152,26 +287,17 @@ button:hover { background: var(--text-white); transform: translateY(-3px); box-s
 .slide img:hover {
     filter: grayscale(0%) brightness(1.1);
     transform: scale(1.02);
-    
-    /* Border turns into a glowing gold frame */
     border-color: var(--gold); 
     box-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
     cursor: pointer;
 }
 
-@keyframes scroll {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(-100%); }
-}
-
-
 .slider-section {
     padding: 60px 0;
-    background: #050505; /* Deep black to make photos pop */
+    background: #050505;
     overflow: hidden;
 }
 
-/* --- Center Gallery Headers --- */
 .slider-section h2 {
     text-align: center;
     width: 100%;
@@ -181,61 +307,54 @@ button:hover { background: var(--text-white); transform: translateY(-3px); box-s
     text-transform: uppercase;
     letter-spacing: 3px;
 }
-/* --- Reveal Animation --- */
-.reveal { 
-    opacity: 0; 
-    transform: translateY(30px); 
-    transition: all 0.8s ease-out; /* Slightly faster for better feel */
-}
-
-.reveal.active { 
-    opacity: 1; 
-    transform: translateY(0); 
-}
 
 /* --- Footer --- */
-footer { padding: 4rem 2rem; border-top: 1px solid rgba(255,255,255,0.05); text-align: center; }
-.social-icons { display: flex; justify-content: center; gap: 2rem; margin-bottom: 2rem; }
-.social-icons a { color: var(--text-grey); font-size: 1.5rem; transition: var(--transition); }
-.social-icons a:hover { color: var(--gold); transform: scale(1.2); }
-
-
-/* --- Responsive Navigation Logic --- */
-
-.checkbtn {
-    font-size: 1.5rem;
-    color: var(--gold);
-    cursor: pointer;
-    display: none; /* Oculto en escritorio */
-    transition: var(--transition);
-    position: relative; 
-    z-index: 1001;
+footer { 
+    padding: 4rem 2rem; 
+    border-top: 1px solid rgba(255,255,255,0.05); 
+    text-align: center; 
 }
 
-#check {
-    display: none; /* Checkbox invisible */
+.social-icons { 
+    display: flex; 
+    justify-content: center; 
+    gap: 2rem; 
+    margin-bottom: 2rem; 
 }
 
+.social-icons a { 
+    color: var(--text-grey); 
+    font-size: 1.5rem; 
+    transition: var(--transition); 
+}
+
+.social-icons a:hover { 
+    color: var(--gold); 
+    transform: scale(1.2); 
+}
+
+/* --- Media Queries --- */
 @media (max-width: 858px) {
     .checkbtn {
-        display: block; /* Aparece en móviles */
+        display: flex; 
     }
 
     .nav-links {
         position: fixed;
         width: 100%;
         height: 100vh;
-        background: rgba(10, 10, 10, 0.98); /* Fondo casi opaco */
+        background: rgba(10, 10, 10, 0.98);
         backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
         top: 0;
-        right: -100%; /* Escondido a la derecha */
+        right: -100%;
         text-align: center;
         display: flex;
         flex-direction: column;
         justify-content: center;
         gap: 3rem;
-        transition: var(--transition);
-        z-index: -1;
+        transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 999;
     }
 
     .nav-links a {
@@ -243,30 +362,29 @@ footer { padding: 4rem 2rem; border-top: 1px solid rgba(255,255,255,0.05); text-
         letter-spacing: 4px;
     }
 
-    /* Mostrar menú al hacer click */
     #check:checked ~ .nav-links {
         right: 0;
     }
 
-    /* Cambiar icono a color blanco al abrir */
-    #check:checked ~ .checkbtn {
-        color: var(--text-white);
+    #check:checked ~ .checkbtn span:nth-child(1) {
+        transform: rotate(45deg) translate(5px, 6px);
+        background-color: var(--text-white);
     }
-}
 
-/* Ajuste para el Jumbotron en móviles */
-@media (max-width: 858px) {
+    #check:checked ~ .checkbtn span:nth-child(2) {
+        opacity: 0;
+    }
+
+    #check:checked ~ .checkbtn span:nth-child(3) {
+        transform: rotate(-45deg) translate(5px, -6px);
+        background-color: var(--text-white);
+    }
+
     .jumbotron h1 {
         font-size: 3rem;
     }
+
     .contact-card {
         padding: 2rem;
     }
-
-    .nav-links {
-        /* Cambia el 0.5s por 0.8s para que el menú se retire con elegancia */
-        transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-    }
 }
-
-
